@@ -22,3 +22,6 @@
 [submodule "quicklogic-fpga-toolchain"]
 	path = quicklogic-fpga-toolchain
 	url = https://github.com/QuickLogic-Corp/quicklogic-fpga-toolchain
+[submodule "qorc-onion-apps"]
+	path = qorc-onion-apps
+	url = https://github.com/coolbreeze413/qorc-onion-apps.git
