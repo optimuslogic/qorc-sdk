@@ -71,7 +71,7 @@ int main(void)
     dbg_str( __DATE__ " " __TIME__ "\n" );
     dbg_str( "##########################\n\n");
 
-    dbg_str( "\n\nHello world!!\n\n");	// <<<<<<<<<<<<<<<<<<<<<  Change me!
+    dbg_str( "\n\nHello world Sensor Interrupt!!\n\n");	// <<<<<<<<<<<<<<<<<<<<<  Change me!
 
     CLI_start_task( my_main_menu );
 
@@ -98,12 +98,29 @@ int main(void)
 //	HAL_PAD_Config(&Pad_test);
 
 	GPIOCfgTypeDef test_gpio;
-	test_gpio.intr_type = LEVEL_TRIGGERED,
+
+	test_gpio.intr_type = EDGE_TRIGGERED,
 	test_gpio.pol_type = FALL_LOW,
 	test_gpio.ucFunc = PAD30_FUNC_SEL_SENS_INT_5,
-	test_gpio.ucGpioNum = GPIO_3,
+	test_gpio.ucGpioNum = GPIO_5,
 	test_gpio.ucPull = PAD_PULLUP,
 	test_gpio.usPadNum = PAD_30,
+	HAL_GPIO_IntrCfg(&test_gpio);
+
+	test_gpio.intr_type = EDGE_TRIGGERED,
+	test_gpio.pol_type = FALL_LOW,
+	test_gpio.ucFunc = PAD35_FUNC_SEL_SENS_INT_1,
+	test_gpio.ucGpioNum = GPIO_1,
+	test_gpio.ucPull = PAD_PULLUP,
+	test_gpio.usPadNum = PAD_35,
+	HAL_GPIO_IntrCfg(&test_gpio);
+
+	test_gpio.intr_type = EDGE_TRIGGERED,
+	test_gpio.pol_type = FALL_LOW,
+	test_gpio.ucFunc = PAD7_FUNC_SEL_SENS_INT_4,
+	test_gpio.ucGpioNum = GPIO_4,
+	test_gpio.ucPull = PAD_PULLUP,
+	test_gpio.usPadNum = PAD_7,
 	HAL_GPIO_IntrCfg(&test_gpio);
 
     /* Start the tasks and timer running. */
@@ -122,6 +139,8 @@ static void nvic_init(void)
     NVIC_SetPriority(CfgDma_IRQn, configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY);
     NVIC_SetPriority(Uart_IRQn, configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY);
     NVIC_SetPriority(FbMsg_IRQn, configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY);
+    //NVIC_SetPriority(Gpio_IRQn, configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY);
+
  }    
 
 //needed for startup_EOSS3b.s asm file

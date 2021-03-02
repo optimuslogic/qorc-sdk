@@ -1131,6 +1131,11 @@
 			<locationURI>PARENT-2-PROJECT_LOC/src/c_lib_retarget.c</locationURI>
 		</link>
 		<link>
+			<name>app/src/exceptions.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/src/exceptions.c</locationURI>
+		</link>
+		<link>
 			<name>app/src/main.c</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/src/main.c</locationURI>

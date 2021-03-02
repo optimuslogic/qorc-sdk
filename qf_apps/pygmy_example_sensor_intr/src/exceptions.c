@@ -420,13 +420,59 @@ void FB_ConfigureInterrupt ( UINT32_t fbIrq, UINT8_t type, UINT8_t polarity, UIN
     INTR_CTRL->FB_INTR_EN_M4 |= ( 1<< fbIrq);
 }
 
-
-
-
-
 void SensorGpio_Handler(void) 
 {
-    spurious_interrupt(__LINE__);
+	NVIC_DisableIRQ(Gpio_IRQn);
+
+	if(INTR_CTRL->GPIO_INTR)
+	{
+		if(INTR_CTRL->GPIO_INTR & (1<<GPIO_4))
+		{
+			dbg_str("GPIO_4");
+			INTR_CTRL->GPIO_INTR = (1<<GPIO_4);
+		}
+		if(INTR_CTRL->GPIO_INTR & (1<<GPIO_5))
+		{
+			dbg_str("GPIO_5");
+			INTR_CTRL->GPIO_INTR = (1<<GPIO_5);
+		}
+		if(INTR_CTRL->GPIO_INTR & (1<<GPIO_6))
+		{
+			dbg_str("GPIO_6");
+			INTR_CTRL->GPIO_INTR = (1<<GPIO_6);
+		}
+		if(INTR_CTRL->GPIO_INTR & (1<<GPIO_7))
+		{
+			dbg_str("GPIO_7");
+			INTR_CTRL->GPIO_INTR = (1<<GPIO_7);
+		}
+		if(INTR_CTRL->GPIO_INTR & (1<<GPIO_3))
+		{
+			dbg_str("GPIO_3");
+			INTR_CTRL->GPIO_INTR = (1<<GPIO_3);
+		}
+		if(INTR_CTRL->GPIO_INTR & (1<<GPIO_2))
+		{
+			dbg_str("GPIO_2");
+			INTR_CTRL->GPIO_INTR = (1<<GPIO_2);
+		}
+		if(INTR_CTRL->GPIO_INTR & (1<<GPIO_1))
+		{
+			dbg_str("GPIO_1");
+			INTR_CTRL->GPIO_INTR = (1<<GPIO_1);
+		}
+		if(INTR_CTRL->GPIO_INTR & (1<<GPIO_0))
+		{
+			dbg_str("GPIO_0");
+			INTR_CTRL->GPIO_INTR = (1<<GPIO_0);
+		}
+	}
+	else
+	{
+		spurious_interrupt(__LINE__);
+	}
+	NVIC_ClearPendingIRQ(Gpio_IRQn);
+	NVIC_EnableIRQ(Gpio_IRQn);
 }
 
 
