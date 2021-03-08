@@ -3291,19 +3291,19 @@
 			<locationURI>PROJECT_LOC/.settings/language.settings.xml</locationURI>
 		</link>
 		<link>
-			<name>app/GCC_Project/output/bin/qf_helloworldm4.bin</name>
+			<name>app/GCC_Project/output/bin/pygmy_example_i2c0.bin</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/output/bin/qf_helloworldm4.bin</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/output/bin/pygmy_example_i2c0.bin</locationURI>
 		</link>
 		<link>
-			<name>app/GCC_Project/output/bin/qf_helloworldm4.elf</name>
+			<name>app/GCC_Project/output/bin/pygmy_example_i2c0.elf</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/output/bin/qf_helloworldm4.elf</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/output/bin/pygmy_example_i2c0.elf</locationURI>
 		</link>
 		<link>
-			<name>app/GCC_Project/output/bin/qf_helloworldm4.map</name>
+			<name>app/GCC_Project/output/bin/pygmy_example_i2c0.map</name>
 			<type>1</type>
-			<locationURI>PARENT-1-PROJECT_LOC/output/bin/qf_helloworldm4.map</locationURI>
+			<locationURI>PARENT-1-PROJECT_LOC/output/bin/pygmy_example_i2c0.map</locationURI>
 		</link>
 		<link>
 			<name>Libraries/CMSIS/Core/Template/ARMv8-M/main_s.c</name>

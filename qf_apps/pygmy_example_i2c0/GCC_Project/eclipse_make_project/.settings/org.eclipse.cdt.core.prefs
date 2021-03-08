@@ -13,7 +13,7 @@ environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.14207941
 environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.142079414/append=true
 environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.142079414/appendContributed=true
 environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.1686206564/INSTALL_DIR/delimiter=\:
-environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.1686206564/INSTALL_DIR/operation=append
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.1686206564/INSTALL_DIR/operation=replace
 environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.1686206564/INSTALL_DIR/value=/home/optimus-pc/Brijesh/qorc-sdk/fpga_toolchain_install/v1.3.1
 environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.1686206564/PATH/delimiter=\:
 environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.1686206564/PATH/operation=replace
