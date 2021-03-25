@@ -22,7 +22,7 @@ and run example application projects included in this SDK on a
 quickfeather development kit.
 
 | Clone this QORC SDK repository using
-| ``git clone --recursive https://github.com/QuickLogic-Corp/qorc-sdk``
+| ``git clone https://github.com/optimuslogic/qorc-sdk.git``
 
 Install the items listed in Pre-requisites section below.
 
