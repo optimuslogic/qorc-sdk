@@ -33,8 +33,8 @@ fi
 
 QORC_SDK_ENVSETUP_VER=1.5.0
 
-GIT_REPO_URL_EXPECTED_LOWERCASE=https://github.com/quicklogic-corp/qorc-sdk.git
-GIT_REPO_URL_EXPECTED_LOWERCASE_ALT=https://github.com/quicklogic-corp/qorc-sdk
+GIT_REPO_URL_EXPECTED_LOWERCASE=https://github.com/optimuslogic/qorc-sdk.git
+GIT_REPO_URL_EXPECTED_LOWERCASE_ALT=https://github.com/optimuslogic/qorc-sdk
 
 ARM_TOOLCHAIN_ARCHIVE_FILE=gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux.tar.bz2
 ARM_TOOLCHAIN_INSTALL_DIR=${PWD}/arm_toolchain_install/gcc-arm-none-eabi-9-2020-q2-update
