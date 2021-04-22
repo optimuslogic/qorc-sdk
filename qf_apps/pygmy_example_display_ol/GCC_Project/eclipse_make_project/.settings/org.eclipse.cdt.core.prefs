@@ -1,0 +1,17 @@
+eclipse.preferences.version=1
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.1100707874/INSTALL_DIR/delimiter=\:
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.1100707874/INSTALL_DIR/operation=replace
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.1100707874/INSTALL_DIR/value=/home/optimus-pc/Brijesh/qorc-sdk_1/qorc-sdk/fpga_toolchain_install/v1.3.1
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.1100707874/PATH/delimiter=\:
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.1100707874/PATH/operation=replace
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.1100707874/PATH/value=/home/optimus-pc/.local/bin\:/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/usr/games\:/usr/local/games\:/snap/bin\:/home/optimus-pc/Brijesh/qorc-sdk_1/qorc-sdk/arm_toolchain_install/gcc-arm-none-eabi-9-2020-q2-update/bin\:$INSTALL_DIR/install/bin\:$INSTALL_DIR/install/bin/python\:$PATH
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.1100707874/append=true
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.1100707874/appendContributed=true
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.1660588470/INSTALL_DIR/delimiter=\:
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.1660588470/INSTALL_DIR/operation=replace
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.1660588470/INSTALL_DIR/value=/home/optimus-pc/Brijesh/qorc-sdk/fpga_toolchain_install/v1.3.1
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.1660588470/PATH/delimiter=\:
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.1660588470/PATH/operation=append
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.1660588470/PATH/value=/home/optimus-pc/.local/bin\:/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/usr/games\:/usr/local/games\:/snap/bin\:/home/optimus-pc/Brijesh/qorc-sdk/arm_toolchain_install/gcc-arm-none-eabi-9-2020-q2-update/bin\:$INSTALL_DIR/install/bin\:$INSTALL_DIR/install/bin/python\:$PATH
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.1660588470/append=true
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.1660588470/appendContributed=true
