@@ -76,17 +76,17 @@ int main(void)
 	Pad_test.ucSmtTrg = PAD_SMT_TRIG_DIS;
 	HAL_PAD_Config(&Pad_test);
 
-	Pad_test.ucPin = PAD_9;
-	Pad_test.ucFunc = PAD9_FUNC_SEL_GPIO_1;
-	Pad_test.ucCtrl = PAD_CTRL_SRC_A0;
-	Pad_test.ucMode = PAD_MODE_OUTPUT_EN;
-	Pad_test.ucPull = PAD_NOPULL;
-	Pad_test.ucDrv = PAD_DRV_STRENGTH_4MA;
-	Pad_test.ucSpeed = PAD_SLEW_RATE_SLOW;
-	Pad_test.ucSmtTrg = PAD_SMT_TRIG_DIS;
-	HAL_PAD_Config(&Pad_test);
-
-    HAL_GPIO_Write(GPIO_1, 1);
+//	Pad_test.ucPin = PAD_9;
+//	Pad_test.ucFunc = PAD9_FUNC_SEL_GPIO_1;
+//	Pad_test.ucCtrl = PAD_CTRL_SRC_A0;
+//	Pad_test.ucMode = PAD_MODE_OUTPUT_EN;
+//	Pad_test.ucPull = PAD_NOPULL;
+//	Pad_test.ucDrv = PAD_DRV_STRENGTH_4MA;
+//	Pad_test.ucSpeed = PAD_SLEW_RATE_SLOW;
+//	Pad_test.ucSmtTrg = PAD_SMT_TRIG_DIS;
+//	HAL_PAD_Config(&Pad_test);
+//
+//    HAL_GPIO_Write(GPIO_1, 1);
 
 
 	//				  padcfg.ucPin = PAD_9;
