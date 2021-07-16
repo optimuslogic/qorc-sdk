@@ -26,6 +26,10 @@
 
 #define _MICRO_TICK64_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /** @brief set tick count to the given value
  *
  *  @param[in] new_val new value for the tick count in micro-seconds
@@ -45,5 +49,9 @@ extern uint64_t xTaskGet_uSecCount(void);
  * @return return given tick count in micro-seconds
  */
 extern uint64_t convert_to_uSecCount(uint32_t tickCount);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _MICRO_TICK64_H_ */

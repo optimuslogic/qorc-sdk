@@ -18,6 +18,7 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
 #include "FreeRTOS.h"
 #include "task.h"
 #include "semphr.h"
@@ -34,6 +35,7 @@
 
 #include "mc3635_wire.h"
 #include "sml_recognition_run.h"
+#include "DataCollection.h"
 
 // When enabled, GPIO (configured in pincfg_table.c) is toggled whenever a
 // datablock is dispacthed for writing to the UART. Datablocks are dispatched
@@ -245,6 +247,39 @@ outQ_processor_t sensor_ssss_livestream_outq_processor =
   .p_event_notifier = NULL
 };
 
+/* SSSS datasave processing element */
+extern void sensor_ssss_datasave_data_processor(
+       QAI_DataBlock_t *pIn,
+       QAI_DataBlock_t *pOut,
+       QAI_DataBlock_t **pRet,
+       datablk_pe_event_notifier_t *pevent_notifier
+     );
+extern void sensor_ssss_datasave_config(void *pDatablockManagerPtr);
+extern int  sensor_ssss_datasave_start(void);
+extern int  sensor_ssss_datasave_stop(void);
+
+/** Sensor SSSS datasave processing element functions */
+
+datablk_pe_funcs_t sensor_ssss_datasave_funcs =
+{
+  .pconfig     = sensor_ssss_datasave_config,
+  .pprocess    = sensor_ssss_datasave_data_processor,
+  .pstart      = sensor_ssss_datasave_start,
+  .pstop       = sensor_ssss_datasave_stop,
+  .p_pe_object = (void *)NULL
+} ;
+
+/** outQ processor for SSSS datasave processing element */
+outQ_processor_t sensor_ssss_datasave_outq_processor =
+{
+  .process_func = NULL,
+  .p_dbm = &sensor_ssssBuffDataBlkMgr,
+  .in_pid = SENSOR_SSSS_LIVESTREAM_PID,
+  .outQ_num = 0,
+  .outQ = NULL,
+  .p_event_notifier = NULL
+};
+
 datablk_pe_descriptor_t  sensor_ssss_datablk_pe_descr[] =
 { // { IN_ID, OUT_ID, ACTIVE, fSupplyOut, fReleaseIn, outQ, &pe_function_pointers, bypass_function, pe_semaphore }
 #if (SENSOR_SSSS_RECOG_ENABLED)
@@ -253,9 +288,15 @@ datablk_pe_descriptor_t  sensor_ssss_datablk_pe_descr[] =
 #endif
 
 #if (SENSOR_SSSS_LIVESTREAM_ENABLED)
-    /* processing element descriptor for SSSS sesnsor livestream */
+    /* processing element descriptor for SSSS sensor livestream */
     { SENSOR_SSSS_ISR_PID, SENSOR_SSSS_LIVESTREAM_PID, true, false, true, &sensor_ssss_livestream_outq_processor, &sensor_ssss_livestream_funcs, NULL, NULL},
 #endif
+
+#if (SENSOR_SSSS_DATASAVE_ENABLED)
+    /* processing element descriptor for SSSS sensor datasave */
+    { SENSOR_SSSS_ISR_PID, SENSOR_SSSS_DATASAVE_PID, true, false, true, &sensor_ssss_datasave_outq_processor, &sensor_ssss_datasave_funcs, NULL, NULL},
+#endif
+
 };
 
 datablk_processor_params_t sensor_ssss_datablk_processor_params[] = {
@@ -469,9 +510,9 @@ void sensor_ssss_ai_data_processor(
     // Invoke the SensiML recognition API
     int nSamples = pIn->dbHeader.numDataElements;
     int nChannels = pIn->dbHeader.numDataChannels;
-
+    set_recognition_current_block_time();
     int batch_sz = nSamples / nChannels;
-    sml_recognition_run_batch(p_data, batch_sz, nChannels, sensor_ssss_config.sensor_id);
+    int classification = sml_recognition_run_batch(p_data, batch_sz, nChannels, sensor_ssss_config.sensor_id);
     *pRet = NULL;
     return;
 }
@@ -495,6 +536,11 @@ void sensor_ssss_event_notifier(int pid, int event_type, void *p_event_data, int
   char *p_data = (char *)p_event_data;
   printf("[SSSS Event] PID=%d, event_type=%d, data=%02x\n", pid, event_type, p_data[0]);
 }
+
+#if (SENSOR_COMMS_KNOWN_PATTERN == 1)
+int16_t sensor_ssss_debug_buffer[240]; // Buffer intended to send a known pattern such as sawtooth
+int16_t sensor_ssss_debug_data = 0;    // state for holding current data for the known pattern
+#endif
 
 /* SSSS livestream processing element functions */
 
@@ -520,6 +566,19 @@ void sensor_ssss_livestream_data_processor(
       HAL_GPIO_Write(GPIO_2, sensor_rate_debug_gpio_val);
       sensor_rate_debug_gpio_val ^= 1;
 #endif
+
+#if (SENSOR_COMMS_KNOWN_PATTERN == 1)
+      int nSamples = pIn->dbHeader.numDataElements;
+      int nChannels = pIn->dbHeader.numDataChannels;
+      // prepare the sawtooth known pattern data
+      for (int k = 0; k < nSamples; k+=nChannels)
+      {
+    	  for (int l = 0; l < nChannels; l++)
+              sensor_ssss_debug_buffer[k+l] = sensor_ssss_debug_data;
+    	  sensor_ssss_debug_data++;
+      }
+	  memcpy (pIn->p_data, sensor_ssss_debug_buffer, nSamples * sizeof(int16_t));
+#endif
       ssi_publish_sensor_data(p_source, ilen);
     }
     *pRet = NULL;
@@ -539,3 +598,50 @@ int  sensor_ssss_livestream_stop(void)
 {
   return 0;
 }
+
+void sensor_ssss_datasave_data_processor(
+       QAI_DataBlock_t *pIn,
+       QAI_DataBlock_t *pOut,
+       QAI_DataBlock_t **pRet,
+       datablk_pe_event_notifier_t *pevent_notifier
+     )
+{
+    int16_t *p_data = (int16_t *) ( (uint8_t *)pIn + offsetof(QAI_DataBlock_t, p_data) );
+    //struct sensor_data sdi;
+    uint64_t  time_start, time_curr, time_end, time_incr;
+
+    if (sensor_ssss_config.enabled == true)
+    {
+      // Live-stream data to the host
+      uint8_t *p_source = pIn->p_data ;
+      int ilen = pIn->dbHeader.numDataElements * pIn->dbHeader.dataElementSize ;
+      /* Save data to the */
+      struct sensor_data Info, *pInfo = &Info;
+      pInfo->bytes_per_reading = pIn->dbHeader.dataElementSize;
+      pInfo->n_bytes = ilen;
+      pInfo->rate_hz = sensor_ssss_config.rate_hz;
+      pInfo->sensor_id = sensor_ssss_config.sensor_id;
+      pInfo->time_end = convert_to_uSecCount(pIn->dbHeader.Tend);
+      pInfo->time_start = convert_to_uSecCount(pIn->dbHeader.Tstart);
+      pInfo->vpData = p_source;
+      data_save((const struct sensor_data *)pInfo);
+
+      }
+    *pRet = NULL;
+    return;
+}
+
+void sensor_ssss_datasave_config(void *pobj)
+{
+}
+
+int  sensor_ssss_datasave_start(void)
+{
+  return 0;
+}
+
+int  sensor_ssss_datasave_stop(void)
+{
+  return 0;
+}
+

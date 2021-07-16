@@ -1,5 +1,5 @@
 #include "Fw_global_config.h"
-
+#if ((USE_FATFS_APIS == 0) && (USE_FREERTOS_FAT_APIS == 0))
 #include "ql_riff.h"
 #include "riff_internal.h"
 #include <string.h>
@@ -141,3 +141,4 @@ int RIFF_file_write_object( struct riff_object *pObject )
 	}    
 }
 
+#endif /* ((USE_FATFS_APIS == 0) && (USE_FREERTOS_FAT_APIS == 0)) */

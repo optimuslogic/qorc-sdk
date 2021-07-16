@@ -128,6 +128,11 @@ static void SPI_PollTxFifoEmptyFlag(void)
 * \fn      static void SPI_FiFoWrite(SPI_HandleTypeDef *hspi)
 * \brief   Function to write SPI data register
 * \param   hspi --- handle to SPI structure
+*
+* @note SPI transmit FIFO depth is 131 entries. This facilitates
+* transfer of 131 bytes of 8-bit wide transfers or 262 bytes of
+* 16-bit wide transfer.
+* To transfer larger data chunk up the data into smaller blocks.
 */
 static void SPI_FiFoWrite(SPI_HandleTypeDef *hspi)
 {
@@ -135,8 +140,10 @@ static void SPI_FiFoWrite(SPI_HandleTypeDef *hspi)
   UINT8_t *txb = (UINT8_t *) (hspi->pTxBuffer);
   UINT32_t ulLen = hspi->usTxXferSize;
 
+  SPI_MS->SER = 0;
   if (ulLen > 0)
   {
+    taskENTER_CRITICAL();
     if (hspi->Init.ucCmdType == PROGRAM_CMD)
     {
       /* byte len to wordLen */
@@ -158,6 +165,7 @@ static void SPI_FiFoWrite(SPI_HandleTypeDef *hspi)
         ulLen--;
       } while (ulLen > 0);
     }
+    taskEXIT_CRITICAL();
   }
 
   //slave select enable
@@ -235,6 +243,7 @@ static void SPI_FlashRead(SPI_HandleTypeDef *hspi)
 HAL_StatusTypeDef HAL_SPI_Transmit(SPI_HandleTypeDef *hspi, UINT8_t *pData, UINT32_t ulTxLen, void (*HAL_SPI_Callback)(void))
 {
   UINT32_t ulDomainClk = 0;
+  uint32_t maxlen;
   if (pData == NULL || ulTxLen == 0)
   {
     printf("[HAL_SPI_Transmit]: Invalid parameters received: len = %d\r\n",ulTxLen);
@@ -289,24 +298,25 @@ HAL_StatusTypeDef HAL_SPI_Transmit(SPI_HandleTypeDef *hspi, UINT8_t *pData, UINT
     SPI_MS->CTRLR0 = (CTRLR0_TMOD_TX | CTRLR0_DFS_16_BIT |
                       (hspi->Init.ulCLKPolarity << BYTE_IDX_7) |
                         (hspi->Init.ulCLKPhase << BYTE_IDX_6));
+    maxlen = SPI1_XFER_LEN_MAX; // 260-bytes or 130 16-bit words
   }
   else if (hspi->Init.ucCmdType == CMD_NoResponse)
   {
     SPI_MS->CTRLR0 = (CTRLR0_TMOD_TX | CTRLR0_DFS_8_BIT |
                       (hspi->Init.ulCLKPolarity << BYTE_IDX_7) |
                         (hspi->Init.ulCLKPhase << BYTE_IDX_6));
+    maxlen = SPI1_XFER_LEN_MAX/2; // 130-bytes
   }
-
   //Disable SPI master interrupts
   SPI_MS->IMR = ((SPI_MS->IMR) & ~(ISR_TXEIM_ACTIVE));
             
   //Enable SPI
   SPI_Enable(hspi, 1);
   do {
-    hspi->usTxXferSize = (hspi->usTxXferCount <= SPI1_XFER_LEN_MAX) ?
-      hspi->usTxXferCount : SPI1_XFER_LEN_MAX;
+    hspi->usTxXferSize = (hspi->usTxXferCount <= maxlen) ?
+      hspi->usTxXferCount : maxlen;
 
-      if((hspi->usTxXferCount <=  SPI1_XFER_LEN_MAX) && HAL_SPI_Callback)
+      if((hspi->usTxXferCount <=  maxlen) && HAL_SPI_Callback)
           hspi->HAL_SPI_TxRxComplCallback = HAL_SPI_Callback;
       else
           hspi->State = HAL_SPI_STATE_TX_BUSY;
@@ -456,9 +466,7 @@ HAL_StatusTypeDef HAL_SPI_TransmitReceive(SPI_HandleTypeDef *hspi, UINT8_t *pTxD
   SPI_MS->SSIENR = SSIENR_SSI_EN;
 
   // For EEPROM tranfer mode, Tx FIFO must be filled without interruptions
-  taskENTER_CRITICAL();
   SPI_FiFoWrite(hspi);
-  taskEXIT_CRITICAL();
 
   //poll for TxFifo Empty
   SPI_PollTxFifoEmptyFlag();

@@ -212,6 +212,7 @@ void audio_ai_data_processor(
     int nChannels = pIn->dbHeader.numDataChannels;
 
     int batch_sz = nSamples / nChannels;
+    set_recognition_current_block_time();
     sml_recognition_run_batch(p_data, batch_sz, nChannels, SENSOR_AUDIO_ID);
 
     *pRet = NULL;
@@ -237,6 +238,11 @@ void audio_event_notifier(int pid, int event_type, void *p_event_data, int num_d
   char *p_data = (char *)p_event_data;
   printf("[AUDIO Event] PID=%d, event_type=%d, data=%02x\n", pid, event_type, p_data[0]);
 }
+
+#if (SENSOR_COMMS_KNOWN_PATTERN == 1)
+int16_t audio_debug_buffer[240]; // Buffer intended to send a known pattern such as sawtooth
+int16_t audio_debug_data = 0;    // state for holding current data for the known pattern
+#endif
 
 /* AUDIO livestream processing element functions */
 void audio_livestream_data_processor(
@@ -269,6 +275,16 @@ void audio_livestream_data_processor(
       sdi.bytes_per_reading = pIn->dbHeader.dataElementSize;
       sdi.vpData     = (void *)pIn->p_data;
 #endif
+
+#if (SENSOR_COMMS_KNOWN_PATTERN == 1)
+      // prepare the sawtooth known pattern data
+      for (int k = 0; k < nSamples; k++)
+      {
+          audio_debug_buffer[k] = audio_debug_data++;
+      }
+	  memcpy (pIn->p_data, audio_debug_buffer, nSamples * sizeof(int16_t));
+#endif
+
       ssi_publish_sensor_data(pIn->p_data, nSamples * (pIn->dbHeader.dataElementSize));
       //ble_send( &sdi );
     }
